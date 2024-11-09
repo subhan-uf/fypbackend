@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
@@ -42,32 +44,31 @@ class DEO(models.Model):
 
 
 class Advisor(models.Model):
-    YEAR_CHOICES = [
-        ('first', 'First'),
-        ('second', 'Second'),
-        ('third', 'Third'),
-        ('fourth', 'Fourth'),
-    ]
-    SENIORITY_CHOICES = [
-        ('professor', 'Professor'),
-        ('associate_professor', 'Associate Professor'),
-        ('assistant_professor', 'Assistant Professor'),
-        ('lecturer', 'Lecturer'),
-        ('it_manager_sr', 'IT Manager (Sr)'),
-        ('it_manager_jr', 'IT Manager (Jr)'),
-    ]
+    class YearChoices(models.TextChoices):
+        FIRST = 'first', 'First'
+        SECOND = 'second', 'Second'
+        THIRD = 'third', 'Third'
+        FOURTH = 'fourth', 'Fourth'
+
+    class SeniorityChoices(models.TextChoices):
+        PROFESSOR = 'professor', 'Professor'
+        ASSOCIATE_PROFESSOR = 'associate_professor', 'Associate Professor'
+        ASSISTANT_PROFESSOR = 'assistant_professor', 'Assistant Professor'
+        LECTURER = 'lecturer', 'Lecturer'
+        IT_MANAGER_SR = 'it_manager_sr', 'IT Manager (Sr)'
+        IT_MANAGER_JR = 'it_manager_jr', 'IT Manager (Jr)'
 
     username = models.CharField(max_length=150, unique=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     password = models.CharField(max_length=128)  # Store the hashed password
-    year = models.CharField(max_length=10, choices=YEAR_CHOICES)
+    year = models.CharField(max_length=10, choices=YearChoices.choices)
     faculty = models.CharField(max_length=100)
-    seniority = models.CharField(max_length=20, choices=SENIORITY_CHOICES)
-    deo = models.ForeignKey(DEO, on_delete=models.CASCADE) #Link to the deo
+    seniority = models.CharField(max_length=20, choices=SeniorityChoices.choices)
+    deo = models.ForeignKey('DEO', on_delete=models.CASCADE, related_name='advisors')  # Link to the DEO
 
     def save(self, *args, **kwargs):
-        # Automatically hash the password before saving
-        if not self.pk:  # Check if it's a new instance
+        # Automatically hash the password before saving if it's a new instance
+        if not self.pk:
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
@@ -124,9 +125,6 @@ class Year(models.Model):
 
     def __str__(self):
         return str(self.academic_year)
-
-
-
 
 
 
@@ -236,11 +234,10 @@ class Course(models.Model):
 # Teacher model representing faculty members
 class Teacher(models.Model):
     name = models.CharField(max_length=100)  # Teacher's name
-    username = models.CharField(max_length=50, unique=True)  # Unique username
     email = models.EmailField(unique=True)  # Unique email address
-    password = models.CharField(max_length=128)  # Store the hashed password
     nic = models.CharField(max_length=20, unique=True)  # Unique NIC (National ID)
     faculty = models.CharField(max_length=100)  # Faculty name
+    courses = models.ManyToManyField(Course, related_name='teachers')
     department = models.ForeignKey(Department, on_delete=models.CASCADE)  # Linked department
     designation = models.CharField(max_length=50, choices=[
         ('professor', 'Professor'),
@@ -248,16 +245,10 @@ class Teacher(models.Model):
         ('lecturer', 'Lecturer'),
         ('chairman', 'Chairman'),
     ])
-    # Add other relevant fields here...
-
-    def save(self, *args, **kwargs):
-        # Automatically hash the password before saving
-        if not self.pk:  # Check if it's a new instance
-            self.password = make_password(self.password)  # Hash the password on creation
-        super().save(*args, **kwargs)
-
+    
+  
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.designation})"
     
 
 
@@ -265,31 +256,6 @@ class Teacher(models.Model):
 
 
 
-class TeacherPreference(models.Model):
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    preferred_days = models.CharField(max_length=100)  # e.g., "Monday, Wednesday"
-    max_hours_per_day = models.PositiveIntegerField()
-    preferred_time_slots = models.CharField(max_length=100)  # e.g., "9:00-10:30, 14:00-15:30"
-    unavailable_days = models.CharField(max_length=100, null=True, blank=True)  # e.g., "Friday"
-
-    def __str__(self):
-        return f"{self.teacher.name} Preferences"
-
-
-
-
-class Timetable(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
-    time_slot = models.CharField(max_length=50)  # e.g., "9:00 AM - 10:30 AM"
-    day_of_week = models.CharField(max_length=10)  # e.g., "Monday"
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.course.title} by {self.teacher.name} in {self.room} on {self.day_of_week}"
-    
 
 
 

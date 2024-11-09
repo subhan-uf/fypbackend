@@ -27,9 +27,9 @@ class DEOLoginSerializer(serializers.Serializer):
         if user is None:
             raise serializers.ValidationError('Invalid username or password.')
 
-        # Check if the user has a role attribute
-        if not hasattr(user, 'role'):
-            raise serializers.ValidationError('User does not have a role attribute.')
+        # Check if the user has a role attribute and if it's 'deo'
+        if not hasattr(user, 'role') or user.role != 'deo':
+            raise serializers.ValidationError('Access denied. Only DEO users can log in.')
 
         attrs['user'] = user
         return attrs
@@ -41,25 +41,34 @@ class DEOLoginSerializer(serializers.Serializer):
 class AdvisorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advisor
-        fields = ['id', 'username', 'profile_pic', 'year', 'faculty', 'seniority']
+        fields = ['id', 'username', 'profile_pic', 'year', 'faculty', 'seniority', 'deo']
+      
+
+    def validate_username(self, value):
+        if Advisor.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username already exists.")
+        return value
 
     def create(self, validated_data):
-        # We don't need to hash the password here since it's handled in the model
-        advisor = Advisor(**validated_data)
-        advisor.save()
-        return advisor
+        try:
+            advisor = Advisor.objects.create(**validated_data)
+            return advisor
+        except Exception as e:
+            raise serializers.ValidationError(f'Failed to create advisor: {str(e)}')
 
     def update(self, instance, validated_data):
-        # Optionally update the password if provided
         password = validated_data.pop('password', None)
         if password:
-            instance.password = password  # Password will be hashed in the model's save method
+            instance.password = password  # Assume hashing is handled in the model's save method
 
-        # Update other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.save()
-        return instance
+
+        try:
+            instance.save()
+            return instance
+        except Exception as e:
+            raise serializers.ValidationError(f'Failed to update advisor: {str(e)}')
     
 
 
@@ -128,7 +137,7 @@ class BatchSerializer(serializers.ModelSerializer):
 class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = ['id', 'section_id', 'students_count']
+        fields = ['id','batch', 'section_id', 'students_count']
 
     def create(self, validated_data):
         section = Section(**validated_data)
@@ -162,6 +171,13 @@ class EquipmentSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
         
+
+class ChairmanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chairman
+        fields = ['id', 'department']  
+
+
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -199,44 +215,69 @@ class LabSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    credit_hours = serializers.IntegerField(read_only=True)  # Make credit_hours read-only
+
     class Meta:
         model = Course
-        fields = ['id', 'course_code', 'title', 'theory_hours', 'practical_hours','credit_hours','department','year','batches']
+        fields = ['id', 'course_code', 'title', 'theory_hours', 'practical_hours', 'credit_hours', 'department', 'year', 'batches']
         
     def create(self, validated_data):
-        course = Course(**validated_data)
-        course.save()
+        # Pop batches from validated_data because we need to set it after saving the course
+        batches_data = validated_data.pop('batches', [])
+        
+        # Create the Course instance
+        course = Course.objects.create(**validated_data)
+        
+        # Assign the many-to-many batches relationship
+        course.batches.set(batches_data)
+        
         return course
-    
+
     def update(self, instance, validated_data):
+        # Pop batches from validated_data so it can be handled separately
+        batches_data = validated_data.pop('batches', None)
+        
+        # Update the remaining fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        
         instance.save()
+
+        # Update batches if provided
+        if batches_data is not None:
+            instance.batches.set(batches_data)
+        
         return instance
-
-
-
-
 
 
 class TeacherSerializer(serializers.ModelSerializer):
+    # Define the courses field, so it can be serialized
+    courses = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), many=True)
+    
     class Meta:
         model = Teacher
-        fields = ['id', 'username', 'profile_pic', 'year', 'faculty', 'position', 'department']
+        fields = ['id', 'name', 'email', 'nic', 'faculty', 'department', 'designation', 'courses']
     
     def create(self, validated_data):
+        # Handling the many-to-many relationship during creation
+        courses_data = validated_data.pop('courses', [])
         teacher = Teacher(**validated_data)
         teacher.save()
+        
+        # Add courses to the teacher after saving
+        teacher.courses.set(courses_data)
         return teacher
     
     def update(self, instance, validated_data):
-    
-        password = validated_data.pop('password', None)
-        if password:
-            instance.password = password 
+        courses_data = validated_data.pop('courses', None)
         
+        # Update teacher fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        
+        # If courses data exists, update it
+        if courses_data is not None:
+            instance.courses.set(courses_data)  # Using set() to properly update many-to-many relationships
+        
         instance.save()
         return instance
-    

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, DEO, Advisor, Chairman,Department, Year, Batch, Section, Equipment, Room, Lab, Course, Teacher, TeacherPreference, Timetable
+from .models import CustomUser, DEO, Advisor, Chairman,Department, Year, Batch, Section, Equipment, Room, Lab, Course, Teacher
 from django.contrib.auth.admin import UserAdmin
 
 # Register CustomUser with UserAdmin for role selection in admin    
@@ -100,20 +100,7 @@ class CourseAdmin(admin.ModelAdmin):
 # Register Teacher
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('name', 'username', 'email', 'faculty', 'department', 'designation')
-    search_fields = ('name', 'username', 'email')
+    list_display = ('name',  'email', 'faculty', 'department', 'designation')
+    search_fields = ('name', 'email')
     list_filter = ('faculty', 'department', 'designation')
 
-# Register TeacherPreference
-@admin.register(TeacherPreference)
-class TeacherPreferenceAdmin(admin.ModelAdmin):
-    list_display = ('teacher', 'preferred_days', 'max_hours_per_day', 'preferred_time_slots', 'unavailable_days')
-    search_fields = ('teacher__name', 'preferred_days')
-    list_filter = ('teacher',)
-
-# Register Timetable
-@admin.register(Timetable)
-class TimetableAdmin(admin.ModelAdmin):
-    list_display = ('course', 'teacher', 'room', 'time_slot', 'day_of_week', 'section', 'batch')
-    search_fields = ('course__title', 'teacher__name', 'room__room_no')
-    list_filter = ('day_of_week', 'batch')

@@ -52,12 +52,12 @@ class DEOLoginView(generics.GenericAPIView):
 
 
 
-class AdvisorListCreateView(generics.ListCreateAPIView):
+class AdvisorCreateandGetAPI(generics.ListCreateAPIView):
     serializer_class = AdvisorSerializer
     permission_classes = [permissions.IsAuthenticated]  # Only allow authenticated users
 
     def get_queryset(self):
-        # Return all advisors (or modify this if you need department-specific filtering)
+        # Return all advisors
         return Advisor.objects.all()
 
     def list(self, request, *args, **kwargs):
@@ -70,61 +70,97 @@ class AdvisorListCreateView(generics.ListCreateAPIView):
         }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            advisor = serializer.save()
+        deo_username = request.data.get('deo_username')
+        try:
+            deo = DEO.objects.get(user__username=deo_username)
+        except DEO.DoesNotExist:
             return Response({
-                'status': 'success',
-                'data': AdvisorSerializer(advisor).data,
-                'message': 'Advisor created successfully.'
-            }, status=status.HTTP_201_CREATED)
-        else:
-            return Response({
-                'status': 'error',
-                'errors': serializer.errors,
-                'message': 'Failed to create advisor.'
+            'status': 'error',
+            'message': 'DEO with the provided username does not exist.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
+    # Inject DEO ID
+        request.data['deo'] = deo.id
 
-class AdvisorRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+        serializer = AdvisorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+            'status': 'error',
+            'message': 'Invalid data',
+            'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+class AdvisorUpdateDestroyAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Advisor.objects.all()
     serializer_class = AdvisorSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only allow authenticated users
+    permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
-        advisor = self.get_object()
-        serializer = self.get_serializer(advisor)
-        return Response({
-            'status': 'success',
-            'data': serializer.data,
-            'message': 'Advisor retrieved successfully.'
-        }, status=status.HTTP_200_OK)
+        try:
+            advisor = self.get_object()
+            serializer = self.get_serializer(advisor)
+            return Response({
+                'status': 'success',
+                'data': serializer.data,
+                'message': 'Advisor retrieved successfully.'
+            }, status=status.HTTP_200_OK)
+        except Advisor.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Advisor not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'Failed to retrieve advisor: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, *args, **kwargs):
         advisor = self.get_object()
-        serializer = self.get_serializer(advisor, data=request.data, partial=True)  # Allow partial updates
+        serializer = self.get_serializer(advisor, data=request.data, partial=True)
+
         if serializer.is_valid():
-            advisor = serializer.save()
-            return Response({
-                'status': 'success',
-                'data': AdvisorSerializer(advisor).data,
-                'message': 'Advisor updated successfully.'
-            }, status=status.HTTP_200_OK)
+            try:
+                # You can add password handling logic if needed here
+                updated_advisor = serializer.save()
+                return Response({
+                    'status': 'success',
+                    'data': AdvisorSerializer(updated_advisor).data,
+                    'message': 'Advisor updated successfully.'
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({
+                    'status': 'error',
+                    'message': f'Failed to update advisor: {str(e)}'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({
                 'status': 'error',
                 'errors': serializer.errors,
-                'message': 'Failed to update advisor.'
+                'message': 'Validation failed for advisor update.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        advisor = self.get_object()
-        advisor.delete()
-        return Response({
-            'status': 'success',
-            'message': 'Advisor deleted successfully.'
-        }, status=status.HTTP_204_NO_CONTENT)
-    
+        try:
+            advisor = self.get_object()
+            advisor.delete()
+            return Response({
+                'status': 'success',
+                'message': 'Advisor deleted successfully.'
+            }, status=status.HTTP_204_NO_CONTENT)
+        except Advisor.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Advisor not found.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'Failed to delete advisor: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -386,6 +422,10 @@ class RoomRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = RoomSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+class ChairmanListView(generics.ListAPIView):
+    queryset = Chairman.objects.all()
+    serializer_class = ChairmanSerializer
+
 
 # Lab Views
 class LabListCreateView(BaseListCreateView):
@@ -412,8 +452,14 @@ class CourseRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+class TeacherListCreateView(BaseListCreateView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
 
 
+class TeacherRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
 
 
 
