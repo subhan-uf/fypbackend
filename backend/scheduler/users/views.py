@@ -1,6 +1,8 @@
 from rest_framework import viewsets,status
 from .models import  *
 from .serializers import  *
+from django.contrib.auth import authenticate
+
 from rest_framework import generics,permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -167,67 +169,67 @@ class AdvisorUpdateDestroyAPI(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-class TeacherListCreateView(generics.ListCreateAPIView):
-    queryset = Teacher.objects.all()
-    serializer_class = TeacherSerializer
-    permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
+# class TeacherListCreateView(generics.ListCreateAPIView):
+#     queryset = Teacher.objects.all()
+#     serializer_class = TeacherSerializer
+#     permission_classes = [IsAuthenticated]  # Ensure only authenticated users can access
 
-    def list(self, request, *args, **kwargs):
-        teachers = self.get_queryset()
-        serializer = self.get_serializer(teachers, many=True)
-        return Response({
-            'status': 'success',
-            'data': serializer.data,
-            'message': 'Teachers retrieved successfully.'
-        }, status=status.HTTP_200_OK)
+#     def list(self, request, *args, **kwargs):
+#         teachers = self.get_queryset()
+#         serializer = self.get_serializer(teachers, many=True)
+#         return Response({
+#             'status': 'success',
+#             'data': serializer.data,
+#             'message': 'Teachers retrieved successfully.'
+#         }, status=status.HTTP_200_OK)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        teacher = serializer.save()
-        return Response({
-            'status': 'success',
-            'data': TeacherSerializer(teacher).data,
-            'message': 'Teacher created successfully.'
-        }, status=status.HTTP_201_CREATED)
-
-
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         teacher = serializer.save()
+#         return Response({
+#             'status': 'success',
+#             'data': TeacherSerializer(teacher).data,
+#             'message': 'Teacher created successfully.'
+#         }, status=status.HTTP_201_CREATED)
 
 
 
-class TeacherDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Teacher.objects.all()
-    serializer_class = TeacherSerializer
-    permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({
-            'status': 'success',
-            'data': serializer.data,
-            'message': 'Teacher retrieved successfully.'
-        }, status=status.HTTP_200_OK)
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        teacher = serializer.save()
-        return Response({
-            'status': 'success',
-            'data': TeacherSerializer(teacher).data,
-            'message': 'Teacher updated successfully.'
-        }, status=status.HTTP_200_OK)
+# class TeacherDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Teacher.objects.all()
+#     serializer_class = TeacherSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({
-            'status': 'success',
-            'message': 'Teacher deleted successfully.'
-        }, status=status.HTTP_204_NO_CONTENT)
+#     def retrieve(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance)
+#         return Response({
+#             'status': 'success',
+#             'data': serializer.data,
+#             'message': 'Teacher retrieved successfully.'
+#         }, status=status.HTTP_200_OK)
+
+#     def update(self, request, *args, **kwargs):
+#         partial = kwargs.pop('partial', False)
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
+#         serializer.is_valid(raise_exception=True)
+#         teacher = serializer.save()
+#         return Response({
+#             'status': 'success',
+#             'data': TeacherSerializer(teacher).data,
+#             'message': 'Teacher updated successfully.'
+#         }, status=status.HTTP_200_OK)
+
+#     def destroy(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         self.perform_destroy(instance)
+#         return Response({
+#             'status': 'success',
+#             'message': 'Teacher deleted successfully.'
+#         }, status=status.HTTP_204_NO_CONTENT)
 
 
 class BaseListCreateView(generics.ListCreateAPIView):
@@ -460,20 +462,6 @@ class TeacherListCreateView(BaseListCreateView):
 class TeacherRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
