@@ -2,7 +2,8 @@
 from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import AdvisorLoginSerializer
+from .serializers import *
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
@@ -37,7 +38,34 @@ class AdvisorLoginView(generics.GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-    
+
+class TeacherPreferenceView(generics.GenericAPIView):
+    serializer_class = TeacherPreferenceSerializer
+    authentication_classes = [JWTAuthentication]  # Ensure JWT token is used for authentication
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
+
+    def post(self, request, *args, **kwargs):
+        # Retrieve teacher id from request data
+        teacher_id = request.data.get('teacher_id')  # Assuming teacher_id is passed in request
+
+        try:
+            teacher = Teacher.objects.get(id=teacher_id)
+        except Teacher.DoesNotExist:
+            return Response({"error": "Teacher not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        preference, created = TeacherPreference.objects.get_or_create(teacher=teacher)
+
+        # Serialize and validate data
+        serializer = self.get_serializer(preference, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 class AdvisorLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]  # Ensures only authenticated users can log out
 
