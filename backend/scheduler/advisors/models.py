@@ -11,9 +11,11 @@ class Timetable(models.Model):
     day_of_week = models.CharField(max_length=10)  # e.g., "Monday"
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    locked = models.BooleanField(default=False)  # Indicates if the slot is locked by the advisor
 
     def __str__(self):
         return f"{self.course.title} by {self.teacher.name} in {self.room} on {self.day_of_week}"
+
 
 
 
@@ -23,7 +25,6 @@ class TeacherPreference(models.Model):
     max_classes_per_day = models.PositiveIntegerField(default=4, help_text="Maximum number of classes the teacher can handle per day")
     health_limitations = models.TextField(blank=True, null=True, help_text="Any health constraints for the teacher")
     preferred_subjects = models.ManyToManyField(Course, blank=True, related_name='preferred_by_teachers')
-    locked_schedule_slots = models.JSONField(blank=True, null=True, help_text="Locked time slots that cannot be changed by the AI scheduler (e.g., {'Monday': ['08:00-09:00']})")
     additional_preferences = models.JSONField(default=dict, blank=True, null=True, help_text="Additional or unknown preferences (stored as key-value pairs)")
     unavailable_days = models.CharField(max_length=100, null=True, blank=True, help_text="Days when the teacher is unavailable (e.g., 'Monday, Wednesday')")
     

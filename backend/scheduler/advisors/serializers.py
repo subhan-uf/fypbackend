@@ -46,7 +46,6 @@ class TeacherPreferenceSerializer(serializers.ModelSerializer):
             instance.max_classes_per_day = validated_data.get('max_classes_per_day', instance.max_classes_per_day)
             instance.health_limitations = validated_data.get('health_limitations', instance.health_limitations)
             instance.preferred_subjects.set(validated_data.get('preferred_subjects', instance.preferred_subjects.all()))
-            instance.locked_schedule_slots = validated_data.get('locked_schedule_slots', instance.locked_schedule_slots)
             instance.unavailable_days = validated_data.get('unavailable_days', instance.unavailable_days)
             instance.save()
             return instance

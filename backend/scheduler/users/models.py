@@ -245,7 +245,7 @@ class Teacher(models.Model):
         ('lecturer', 'Lecturer'),
         ('chairman', 'Chairman'),
     ])
-    
+      
   
     def __str__(self):
         return f"{self.name} ({self.designation})"
