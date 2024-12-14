@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import CustomUser, DEO, Advisor, Chairman,Department, Year, Batch, Section, Equipment, Room, Lab, Course, Teacher
 from django.contrib.auth.admin import UserAdmin
 
+
+admin.site.site_header = "NED Administraion"  # The header text
+admin.site.site_title = "NED Admin Portal"  # The browser tab title
+admin.site.index_title = "Welcome to the NED Admin Panel"  # The index page title
+
 # Register CustomUser with UserAdmin for role selection in admin    
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
