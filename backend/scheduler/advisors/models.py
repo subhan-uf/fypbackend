@@ -34,5 +34,40 @@ class TeacherPreference(models.Model):
 
 
 
+class TimeSlot(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
 
 
+
+
+
+
+class Constraint(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, blank=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, blank=True)
+    section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
+    batch = models.ForeignKey(Batch, on_delete=models.SET_NULL, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
+    day_of_week = models.CharField(max_length=10)  # e.g., "Monday"
+    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    is_hard_constraint = models.BooleanField(default=True, help_text="If true, this is a hard constraint that must be followed.")
+
+    def __str__(self):
+        return f"Constraint for {self.teacher} or {self.room} on {self.day_of_week} during {self.time_slot}"
+
+
+
+
+
+
+class TimetableGenerationLog(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=[('success', 'Success'), ('failed', 'Failed')])
+    message = models.TextField(blank=True, null=True)  # Optional error/success message
+
+    def __str__(self):
+        return f"{self.timestamp} - {self.status}"

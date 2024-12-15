@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# from .models import CustomUser, Advisor, DEO, Chairman,Teacher,Course
 from .models import * 
 from django.contrib.auth import authenticate
 
