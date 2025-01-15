@@ -1,9 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.hashers import make_password
-from django.core.exceptions import ValidationError
 
 
+# -----------------------------------------------------------------------------
+#  CUSTOM USER + DEO + ADVISOR + CHAIRMAN + DEPARTMENT + YEAR
+# -----------------------------------------------------------------------------
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Admin'),
@@ -15,10 +17,6 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     staff_id = models.CharField(max_length=20, unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    
-
-
-
 
 
 class DEO(models.Model):
@@ -34,16 +32,16 @@ class DEO(models.Model):
             role='deo',
             first_name=first_name,
             last_name=last_name,
-            staff_id=staff_id,
-            department_name=department_name
+            staff_id=staff_id
         )
         return cls.objects.create(user=user, department_name=department_name)
-    
-
-
 
 
 class Advisor(models.Model):
+    """
+    Advisor model (untouched).
+    Contains references to a DEO. 
+    """
     class YearChoices(models.TextChoices):
         FIRST = 'first', 'First'
         SECOND = 'second', 'Second'
@@ -60,25 +58,19 @@ class Advisor(models.Model):
 
     username = models.CharField(max_length=150, unique=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    password = models.CharField(max_length=128)  # Store the hashed password
+    password = models.CharField(max_length=128)  # hashed password
     year = models.CharField(max_length=10, choices=YearChoices.choices)
     faculty = models.CharField(max_length=100)
     seniority = models.CharField(max_length=20, choices=SeniorityChoices.choices)
-    deo = models.ForeignKey('DEO', on_delete=models.CASCADE, related_name='advisors')  # Link to the DEO
+    deo = models.ForeignKey('DEO', on_delete=models.CASCADE, related_name='advisors')
 
     def save(self, *args, **kwargs):
-        # Automatically hash the password before saving if it's a new instance
-        if not self.pk:
+        if not self.pk:  # new instance => hash password
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.faculty} Advisor ({self.year})"
-
-
-
-
-
 
 
 class Chairman(models.Model):
@@ -100,164 +92,112 @@ class Chairman(models.Model):
         return cls.objects.create(user=user, department=department)
 
 
-
-
-
-
-# Department model for managing different departments in the institution
 class Department(models.Model):
-    name = models.CharField(max_length=100)  # Department name
-    chairman = models.ForeignKey('Chairman', on_delete=models.SET_NULL, null=True, related_name='head_of_department')  # Department chairman
+    name = models.CharField(max_length=100)
+    chairman = models.ForeignKey('Chairman', on_delete=models.SET_NULL, null=True, related_name='head_of_department')
 
     def __str__(self):
         return self.name
 
 
-
-
-
-
-# Academic year model to represent different academic years
 class Year(models.Model):
-    academic_year = models.PositiveIntegerField()  # Academic year number
-    academic_start = models.DateField()  # Start date of the academic year
-    academic_end = models.DateField()  # End date of the academic year
+    academic_year = models.PositiveIntegerField()
+    academic_start = models.DateField()
+    academic_end = models.DateField()
 
     def __str__(self):
         return str(self.academic_year)
 
 
-
-# Batch model to represent different batches in an academic year
+# -----------------------------------------------------------------------------
+#  MODELS FOR DEO TABLES (Option C approach: real PK is 'id')
+# -----------------------------------------------------------------------------
 class Batch(models.Model):
-    year = models.ForeignKey(Year, on_delete=models.CASCADE)  # Linking to the Year model
-    batch_id = models.CharField(max_length=10)  # Unique batch identifier
+    Batch_ID = models.AutoField(primary_key=True)
+    Batch_name = models.CharField(max_length=100)
+    Year = models.IntegerField()
 
     def __str__(self):
-        return f"{self.year} - {self.batch_id}"
+        return f"{self.Batch_name} (Year: {self.Year})"
 
 
-
-
-
-# Section model to represent sections within batches
 class Section(models.Model):
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)  # Linking to the Batch model
-    section_id = models.CharField(max_length=1)  # Section identifier (e.g., A, B, C)
-    students_count = models.PositiveIntegerField()  # Number of students in the section
+    Section_ID = models.AutoField(primary_key=True)
+    Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='sections')
+    Section_name = models.CharField(max_length=50)
+    Max_students = models.PositiveIntegerField()
+    Max_gaps = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"{self.batch} - Section {self.section_id}"
+        return f"{self.Section_name} (Batch: {self.Batch_ID.Batch_name})"
 
 
-
-
-
-
-# Equipment model to represent various equipment available
-class Equipment(models.Model):
-    projector = models.BooleanField(default=False)  # Projector availability
-    speaker = models.BooleanField(default=False)  # Speaker availability
-    pc_connection = models.BooleanField(default=False)  # PC connection availability
-    wifi = models.BooleanField(default=False)  # Wi-Fi availability
-
-    def __str__(self):
-        return f"Equipment: Projector={self.projector}, Speaker={self.speaker}, PC Connection={self.pc_connection}, WiFi={self.wifi}"
-
-
-
-
-
-
-# Room model representing classrooms with associated equipment
-class Room(models.Model):
-    floor = models.PositiveIntegerField()  # Floor number
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)  # Linked department
-    max_std_limit = models.PositiveIntegerField()  # Maximum student capacity
-    room_no = models.CharField(max_length=10)  # Room number
-    equipment = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True)  # Linked equipment
-    room_type = models.CharField(max_length=20)# room type 
-    def __str__(self):
-        return f"Room {self.room_no} on Floor {self.floor}"
-
-
-
-
-
-
-
-# Lab model representing specialized labs with associated equipment
-class Lab(models.Model):
-    floor = models.PositiveIntegerField()  # Floor number
-    lab_no = models.CharField(max_length=10)  # Lab number
-    max_capacity = models.PositiveIntegerField()  # Maximum capacity
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)  # Linked department
-    equipment = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True)  # Linked equipment
-
-    def __str__(self):
-        return f"Lab {self.lab_no} on Floor {self.floor}"
-
-
-
-
-
-
-
-
-
-# Course model representing different courses offered
-class Course(models.Model):
-    course_code = models.CharField(max_length=10, unique=True)  # Unique course code
-    title = models.CharField(max_length=100)  # Course title
-    theory_hours = models.PositiveIntegerField()  # Number of theory hours
-    practical_hours = models.PositiveIntegerField()  # Number of practical hours
-    credit_hours = models.PositiveIntegerField()  # Total credit hours
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)  # Linked department
-    year = models.ForeignKey(Year, on_delete=models.CASCADE)  # Linked academic year
-    batches = models.ManyToManyField(Batch, related_name='courses')  # Batches associated with the course
-
-    def save(self, *args, **kwargs):
-        # Automatically calculate credit hours before saving
-        self.credit_hours = self.theory_hours + self.practical_hours
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.title} ({self.course_code})"
-
-
-
-
-
-
-
-
-# Teacher model representing faculty members
 class Teacher(models.Model):
-    name = models.CharField(max_length=100)  # Teacher's name
-    email = models.EmailField(unique=True)  # Unique email address
-    nic = models.CharField(max_length=20, unique=True)  # Unique NIC (National ID)
-    faculty = models.CharField(max_length=100)  # Faculty name
-    courses = models.ManyToManyField(Course, related_name='teachers')
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)  # Linked department
-    designation = models.CharField(max_length=50, choices=[
-        ('professor', 'Professor'),
-        ('associate_professor', 'Associate Professor'),
-        ('lecturer', 'Lecturer'),
-        ('chairman', 'Chairman'),
-    ])
-      
-  
+    Teacher_ID = models.IntegerField(unique=True)
+    Name = models.CharField(max_length=100)
+    NIC = models.CharField(max_length=20, unique=True)
+    Email = models.EmailField(unique=True)
+    Phone = models.CharField(max_length=15, null=True, blank=True)
+    Max_classes = models.PositiveIntegerField()
+    Health_limitation = models.CharField(max_length=255, null=True, blank=True)
+    Seniority = models.CharField(max_length=50, null=True, blank=True)
+    Teacher_type = models.CharField(max_length=50)  # e.g. "Permanent", "Visiting", etc.
+
     def __str__(self):
-        return f"{self.name} ({self.designation})"
-    
+        return self.Name
 
 
+class Room(models.Model):
+    Room_ID = models.IntegerField(unique=True)
+    Room_no = models.CharField(max_length=50)
+    Max_capacity = models.PositiveIntegerField()
+    Floor = models.IntegerField()
+    Room_type = models.CharField(max_length=100)
+    Multimedia = models.BooleanField(default=False)
+    Speaker = models.BooleanField(default=False)
+    ROOM_STATUS_CHOICES = [
+        ('enable', 'Enable'),
+        ('disable', 'Disable')
+    ]
+    Room_status = models.CharField(max_length=7, choices=ROOM_STATUS_CHOICES, default='enable')
+
+    def __str__(self):
+        return f"Room {self.Room_no}"
 
 
+class Course(models.Model):
+    Course_ID = models.IntegerField(unique=True)
+    Course_name = models.CharField(max_length=100)
+    Course_code = models.CharField(max_length=20, unique=True)
+    Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='courses')
+    Max_classes_per_day = models.PositiveIntegerField()
+    Credit_hours = models.PositiveIntegerField()
+    Course_desc = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.Course_name
 
 
+class TeacherCourseAssignment(models.Model):
+    Assignment_ID = models.IntegerField(unique=True)
+    Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_assignments')
+    Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_assignments')
+    TEACHER_TYPE_CHOICES = [
+        ('lab', 'Lab'),
+        ('theory', 'Theory')
+    ]
+    Teacher_type = models.CharField(max_length=10, choices=TEACHER_TYPE_CHOICES)
+
+    def __str__(self):
+        return f"{self.Teacher_ID.Name} -> {self.Course_ID.Course_name}"
 
 
+class BatchCourseTeacherAssignment(models.Model):
+    Assignment_ID = models.IntegerField(unique=True)
+    Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
+    Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
+    Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
+    Section_ID = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
 
-
-    
+    def __str__(self):
+        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}"
