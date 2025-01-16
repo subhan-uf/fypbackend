@@ -74,7 +74,7 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = [
-            'id', 'Teacher_ID', 'Name', 'NIC', 'Email', 'Phone',
+          'Teacher_ID', 'Name', 'NIC', 'Email', 'Phone',
             'Max_classes', 'Health_limitation', 'Seniority', 'Teacher_type'
         ]
 
@@ -83,7 +83,7 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = [
-            'id', 'Room_ID', 'Room_no', 'Max_capacity', 'Floor',
+            'Room_ID', 'Room_no', 'Max_capacity', 'Floor',
             'Room_type', 'Multimedia', 'Speaker', 'Room_status'
         ]
 
@@ -92,8 +92,8 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = [
-            'id', 'Course_ID', 'Course_name', 'Course_code', 'Batch_ID',
-            'Max_classes_per_day', 'Credit_hours', 'Course_desc'
+             'Course_ID', 'Course_name', 'Course_code', 'Batch_ID',
+            'Max_classes_per_day', 'Credit_hours', 'Course_desc', 'Is_Lab'
         ]
 
 

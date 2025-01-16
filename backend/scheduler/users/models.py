@@ -133,7 +133,7 @@ class Section(models.Model):
 
 
 class Teacher(models.Model):
-    Teacher_ID = models.IntegerField(unique=True)
+    Teacher_ID = models.CharField(primary_key=True)
     Name = models.CharField(max_length=100)
     NIC = models.CharField(max_length=20, unique=True)
     Email = models.EmailField(unique=True)
@@ -148,7 +148,7 @@ class Teacher(models.Model):
 
 
 class Room(models.Model):
-    Room_ID = models.IntegerField(unique=True)
+    Room_ID = models.AutoField(primary_key=True)
     Room_no = models.CharField(max_length=50)
     Max_capacity = models.PositiveIntegerField()
     Floor = models.IntegerField()
@@ -166,14 +166,14 @@ class Room(models.Model):
 
 
 class Course(models.Model):
-    Course_ID = models.IntegerField(unique=True)
+    Course_ID = models.AutoField(primary_key=True)
     Course_name = models.CharField(max_length=100)
     Course_code = models.CharField(max_length=20, unique=True)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='courses')
     Max_classes_per_day = models.PositiveIntegerField()
     Credit_hours = models.PositiveIntegerField()
     Course_desc = models.TextField(null=True, blank=True)
-
+    Is_Lab = models.BooleanField(default=False)
     def __str__(self):
         return self.Course_name
 
