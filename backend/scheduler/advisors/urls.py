@@ -33,4 +33,6 @@ urlpatterns = [
     # TimetableDetail
     path('timetable-detail/', TimetableDetailListCreateView.as_view(), name='ttd-list-create'),
     path('timetable-detail/<int:pk>/', TimetableDetailRetrieveUpdateDestroyView.as_view(), name='ttd-detail'),
+
+    
 ]

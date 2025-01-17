@@ -19,11 +19,11 @@ class Compensatory(models.Model):
 
 
 class CoursePreferenceConstraints(models.Model):
-    Preference_ID = models.IntegerField(unique=True)
+    Preference_ID = models.AutoField(primary_key=True)
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
     Date = models.DateField()
-    Start_time = models.TimeField()
-    End_time = models.TimeField()
+    Start_time = models.TimeField(null=True, blank=True)
+    End_time = models.TimeField(null=True, blank=True)
     Status = models.CharField(max_length=50, blank=True, null=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     LAB_OR_THEORY_CHOICES = [
@@ -40,13 +40,13 @@ class CoursePreferenceConstraints(models.Model):
 
 
 class TeacherRoomPreference(models.Model):
-    Room_Preference_ID = models.IntegerField(unique=True)
+    Room_Preference_ID = models.AutoField(primary_key=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    Room_type = models.CharField(max_length=100, blank=True, null=True)
-    Preference_details = models.CharField(max_length=255, blank=True, null=True)
+    Floor = models.CharField(max_length=10, blank=True, null=True)
+
 
     def __str__(self):
-        return f"TchrRoomPref: Tchr={self.Teacher_ID.Name}, {self.Room_type}"
+        return f"TchrRoomPref: Tchr={self.Teacher_ID.Name}"
 
 
 class TimetableHeader(models.Model):
@@ -70,8 +70,8 @@ class TimetableDetail(models.Model):
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     Room_ID = models.ForeignKey(Room, on_delete=models.CASCADE)
     Day = models.CharField(max_length=10, blank=True, null=True)
-    Start_Time = models.TimeField(blank=True, null=True)
-    End_Time = models.TimeField(blank=True, null=True)
+    Start_time = models.TimeField(null=True, blank=True)
+    End_time = models.TimeField(null=True, blank=True)
     Locked = models.BooleanField(default=False)
     TEACHER_PREF_STATUS_CHOICES = [
         ('R', 'Red'),

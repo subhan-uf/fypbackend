@@ -100,10 +100,10 @@ class CourseSerializer(serializers.ModelSerializer):
 class TeacherCourseAssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeacherCourseAssignment
-        fields = ['id', 'Assignment_ID', 'Teacher_ID', 'Course_ID', 'Teacher_type']
+        fields = ['Assignment_ID', 'Teacher_ID', 'Course_ID', 'Teacher_type']
 
 
 class BatchCourseTeacherAssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = BatchCourseTeacherAssignment
-        fields = ['id', 'Assignment_ID', 'Batch_ID', 'Course_ID', 'Teacher_ID', 'Section_ID']
+        fields = ['Assignment_ID', 'Batch_ID', 'Course_ID', 'Teacher_ID', 'Course_type']

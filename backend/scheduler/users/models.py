@@ -179,7 +179,7 @@ class Course(models.Model):
 
 
 class TeacherCourseAssignment(models.Model):
-    Assignment_ID = models.IntegerField(unique=True)
+    Assignment_ID = models.AutoField(primary_key=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_assignments')
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_assignments')
     TEACHER_TYPE_CHOICES = [
@@ -193,11 +193,12 @@ class TeacherCourseAssignment(models.Model):
 
 
 class BatchCourseTeacherAssignment(models.Model):
-    Assignment_ID = models.IntegerField(unique=True)
+    Assignment_ID = models.AutoField(primary_key=True)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
-    Section_ID = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
+    Course_type= models.CharField(max_length=100)
+   
 
     def __str__(self):
         return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}"

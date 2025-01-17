@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from users.models import Advisor
 
 from .models import (
     CustomUser, DEO, Advisor, Chairman,
@@ -105,5 +106,5 @@ class TeacherCourseAssignmentAdmin(admin.ModelAdmin):
 class BatchCourseTeacherAssignmentAdmin(admin.ModelAdmin):
     list_display = (
         'Assignment_ID', 'Batch_ID', 'Course_ID',
-        'Teacher_ID', 'Section_ID'
+        'Teacher_ID', 'Course_type'
     )
