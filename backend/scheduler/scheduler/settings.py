@@ -122,17 +122,27 @@ WSGI_APPLICATION = 'scheduler.wsgi.application'
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Default to PostgreSQL
+#         'NAME': os.getenv('Database', 'Resource'),  # Fallback to local DB name
+#         'USER': os.getenv('User', 'postgres'),  # Fallback to local username
+#         'PASSWORD': os.getenv('Password', 'subhan'),  # Fallback to local password
+#         'HOST': os.getenv('Hostname', 'localhost'),  # Fallback to localhost
+#         'PORT': os.getenv('Port', '5432'),  # Default PostgreSQL port
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Default to PostgreSQL
-        'NAME': os.getenv('Database', 'Resource'),  # Fallback to local DB name
-        'USER': os.getenv('User', 'postgres'),  # Fallback to local username
-        'PASSWORD': os.getenv('Password', 'subhan'),  # Fallback to local password
-        'HOST': os.getenv('Hostname', 'localhost'),  # Fallback to localhost
-        'PORT': os.getenv('Port', '5432'),  # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'resource_ys68',
+        'USER': 'resource_ys68_user',
+        'PASSWORD': 'tuxkzkY1ngElJR5tkD0CD8NX35Qm6jJ4',
+        'HOST': 'dpg-cu5rf62j1k6c73f10fqg-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
-
 
 
 
