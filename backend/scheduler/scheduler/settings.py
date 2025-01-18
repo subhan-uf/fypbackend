@@ -29,6 +29,9 @@ SECRET_KEY = 'django-insecure-!hxqcow+s&xp+c$*r2gpl$x64&p84kjmq6_1dl2&3=@)ao5&mt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 CSRF_TRUSTED_ORIGINS = ['https://fypbackend-production-f78d.up.railway.app']
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = ['fypbackend-production-f78d.up.railway.app','localhost', '127.0.0.1']
 
