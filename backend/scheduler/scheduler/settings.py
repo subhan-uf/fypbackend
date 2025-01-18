@@ -126,7 +126,7 @@ DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Default to PostgreSQL
         'NAME': os.getenv('Database', 'Resource'),  # Fallback to local DB name
-        'USER': os.getenv('Username', 'postgres'),  # Fallback to local username
+        'USER': os.getenv('User', 'postgres'),  # Fallback to local username
         'PASSWORD': os.getenv('Password', 'subhan'),  # Fallback to local password
         'HOST': os.getenv('Hostname', 'localhost'),  # Fallback to localhost
         'PORT': os.getenv('Port', '5432'),  # Default PostgreSQL port
