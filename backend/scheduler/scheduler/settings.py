@@ -129,7 +129,7 @@ DATABASES = {
         'USER': os.getenv('PGUSER'),  # Fallback to local username
         'PASSWORD': os.getenv('PGPASSWORD'),  # Fallback to local password
         'HOST': os.getenv('PGHOST'),  # Fallback to localhost
-        'PORT': os.getenv('PGPORT'),  # Default PostgreSQL port
+        'PORT': os.getenv('PGPORT', '5432'),  # Default PostgreSQL port
     }
 }
 
