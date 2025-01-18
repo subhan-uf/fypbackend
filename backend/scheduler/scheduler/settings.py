@@ -34,7 +34,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ['fypbackend-production-f78d.up.railway.app','localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['https://fypbackend-d1rs.onrender.com','localhost', '127.0.0.1']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -125,11 +125,11 @@ WSGI_APPLICATION = 'scheduler.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Default to PostgreSQL
-        'NAME': os.getenv('PGDATABASE', 'Resource'),  # Fallback to local DB name
-        'USER': os.getenv('PGUSER', 'postgres'),  # Fallback to local username
-        'PASSWORD': os.getenv('PGPASSWORD', 'subhan'),  # Fallback to local password
-        'HOST': os.getenv('PGHOST', 'localhost'),  # Fallback to localhost
-        'PORT': os.getenv('PGPORT', '5432'),  # Default PostgreSQL port
+        'NAME': os.getenv('Database', 'Resource'),  # Fallback to local DB name
+        'USER': os.getenv('Username', 'postgres'),  # Fallback to local username
+        'PASSWORD': os.getenv('Password', 'subhan'),  # Fallback to local password
+        'HOST': os.getenv('Hostname', 'localhost'),  # Fallback to localhost
+        'PORT': os.getenv('Port', '5432'),  # Default PostgreSQL port
     }
 }
 
