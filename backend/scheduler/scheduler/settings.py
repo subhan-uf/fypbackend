@@ -124,15 +124,14 @@ WSGI_APPLICATION = 'scheduler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),  # No fallback
-        'NAME': os.getenv('DB_NAME'),     # No fallback
-        'USER': os.getenv('DB_USER'),     # No fallback
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # No fallback
-        'HOST': os.getenv('DB_HOST'),     # No fallback
-        'PORT': os.getenv('DB_PORT'),     # No fallback
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Default to PostgreSQL
+        'NAME': os.getenv('PGDATABASE', 'Resource'),  # Fallback to local DB name
+        'USER': os.getenv('PGUSER', 'postgres'),  # Fallback to local username
+        'PASSWORD': os.getenv('PGPASSWORD', 'subhan'),  # Fallback to local password
+        'HOST': os.getenv('PGHOST', 'localhost'),  # Fallback to localhost
+        'PORT': os.getenv('PGPORT', '5432'),  # Default PostgreSQL port
     }
 }
-
 
 
 
