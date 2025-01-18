@@ -115,14 +115,15 @@ WSGI_APPLICATION = 'scheduler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', 'default_db_name'),
-        'USER': os.getenv('DB_USER', 'default_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'default_password'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),  # Safe fallback
+        'NAME': os.getenv('DB_NAME'),  # No fallback, must be set
+        'USER': os.getenv('DB_USER'),  # No fallback, must be set
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # No fallback, must be set
+        'HOST': os.getenv('DB_HOST'),  # No fallback, must be set
+        'PORT': os.getenv('DB_PORT', '5432'),  # 5432 is a reasonable default
     }
 }
+
 
 
 
