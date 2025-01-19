@@ -29,14 +29,35 @@ SECRET_KEY = 'django-insecure-!hxqcow+s&xp+c$*r2gpl$x64&p84kjmq6_1dl2&3=@)ao5&mt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Make it environment-controlled
 
-CSRF_TRUSTED_ORIGINS = ['https://fypbackend-d1rs.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    "https://nedfypp.netlify.app",
+    "https://fypbackend-d1rs.onrender.com",
+]
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = ['fypbackend-d1rs.onrender.com','localhost', '127.0.0.1']
+CORS_ALLOWED_ORIGINS = [
+    "https://nedfypp.netlify.app",
+    "https://fypbackend-d1rs.onrender.com",
+ ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
+
 
 
 # Application definition
