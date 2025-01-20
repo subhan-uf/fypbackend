@@ -33,9 +33,7 @@ class AdvisorLoginSerializer(serializers.Serializer):
         return attrs
 
 
-# ----------------------
-# New Tables
-# ----------------------
+
 class CompensatorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Compensatory

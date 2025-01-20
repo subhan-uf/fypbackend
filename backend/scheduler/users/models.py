@@ -3,9 +3,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 
 
-# -----------------------------------------------------------------------------
-#  CUSTOM USER + DEO + ADVISOR + CHAIRMAN + DEPARTMENT + YEAR
-# -----------------------------------------------------------------------------
+
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Admin'),
@@ -109,9 +107,7 @@ class Year(models.Model):
         return str(self.academic_year)
 
 
-# -----------------------------------------------------------------------------
-#  MODELS FOR DEO TABLES (Option C approach: real PK is 'id')
-# -----------------------------------------------------------------------------
+
 class Batch(models.Model):
     Batch_ID = models.AutoField(primary_key=True)
     Batch_name = models.CharField(max_length=100)

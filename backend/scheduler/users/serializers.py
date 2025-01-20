@@ -9,9 +9,7 @@ from .models import (
 )
 
 
-# -----------------------------------------------------------------------------
-#  DEO LOGIN SERIALIZER (unchanged)
-# -----------------------------------------------------------------------------
+
 class DEOLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -34,18 +32,14 @@ class DEOLoginSerializer(serializers.Serializer):
         return attrs
 
 
-# -----------------------------------------------------------------------------
-#  ADVISOR SERIALIZER (kept if needed by other code)
-# -----------------------------------------------------------------------------
+
 class AdvisorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advisor
         fields = ['id', 'username', 'profile_pic', 'year', 'faculty', 'seniority', 'deo']
 
 
-# -----------------------------------------------------------------------------
-#  DEPARTMENT, YEAR, ETC. SERIALIZERS
-# -----------------------------------------------------------------------------
+
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department

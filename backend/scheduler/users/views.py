@@ -25,9 +25,7 @@ from .serializers import (
     BatchCourseTeacherAssignmentSerializer
 )
 
-# ----------------------------------------
-#  DEO Login
-# ----------------------------------------
+
 class DEOLoginView(generics.GenericAPIView):
     serializer_class = DEOLoginSerializer
 
@@ -36,7 +34,7 @@ class DEOLoginView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
 
-        # Must be 'deo'
+       
         if user.role != 'deo':
             return Response(
                 {'error': 'Access denied. Only users with DEO role can log in.'},
@@ -54,9 +52,7 @@ class DEOLoginView(generics.GenericAPIView):
         }, status=status.HTTP_200_OK)
 
 
-# ----------------------------------------
-#  DEO Logout
-# ----------------------------------------
+
 class DEOLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -76,9 +72,7 @@ class DEOLogoutView(generics.GenericAPIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# ----------------------------------------
-#  Base Generic Classes
-# ----------------------------------------
+
 class BaseListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -86,9 +80,6 @@ class BaseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 
-# ----------------------------------------
-#  Department
-# ----------------------------------------
 class DepartmentListCreateView(BaseListCreateView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
@@ -98,9 +89,6 @@ class DepartmentRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = DepartmentSerializer
 
 
-# ----------------------------------------
-#  Year
-# ----------------------------------------
 class YearListCreateView(BaseListCreateView):
     queryset = Year.objects.all()
     serializer_class = YearSerializer
@@ -110,9 +98,7 @@ class YearRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = YearSerializer
 
 
-# ----------------------------------------
-#  Batch
-# ----------------------------------------
+
 class BatchListCreateView(BaseListCreateView):
     queryset = Batch.objects.all()
     serializer_class = BatchSerializer
@@ -122,9 +108,7 @@ class BatchRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = BatchSerializer
 
 
-# ----------------------------------------
-#  Section
-# ----------------------------------------
+
 class SectionListCreateView(BaseListCreateView):
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
@@ -134,9 +118,7 @@ class SectionRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = SectionSerializer
 
 
-# ----------------------------------------
-#  Teacher
-# ----------------------------------------
+
 class TeacherListCreateView(BaseListCreateView):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
@@ -146,9 +128,7 @@ class TeacherRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = TeacherSerializer
 
 
-# ----------------------------------------
-#  Room
-# ----------------------------------------
+
 class RoomListCreateView(BaseListCreateView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
@@ -158,9 +138,7 @@ class RoomRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = RoomSerializer
 
 
-# ----------------------------------------
-#  Course
-# ----------------------------------------
+
 class CourseListCreateView(BaseListCreateView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -170,9 +148,7 @@ class CourseRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     serializer_class = CourseSerializer
 
 
-# ----------------------------------------
-#  TeacherCourseAssignment
-# ----------------------------------------
+
 class TeacherCourseAssignmentListCreateView(BaseListCreateView):
     queryset = TeacherCourseAssignment.objects.all()
     serializer_class = TeacherCourseAssignmentSerializer
@@ -182,9 +158,6 @@ class TeacherCourseAssignmentRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroy
     serializer_class = TeacherCourseAssignmentSerializer
 
 
-# ----------------------------------------
-#  BatchCourseTeacherAssignment
-# ----------------------------------------
 class BatchCourseTeacherAssignmentListCreateView(BaseListCreateView):
     queryset = BatchCourseTeacherAssignment.objects.all()
     serializer_class = BatchCourseTeacherAssignmentSerializer

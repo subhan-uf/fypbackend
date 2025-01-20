@@ -21,9 +21,7 @@ from .models import (
 from users.models import Advisor
 
 
-# ----------------------------------------------
-#  ADVISOR LOGIN (untouched, except serializer)
-# ----------------------------------------------
+
 class AdvisorLoginView(generics.GenericAPIView):
     serializer_class = AdvisorLoginSerializer
 
@@ -32,7 +30,7 @@ class AdvisorLoginView(generics.GenericAPIView):
         if serializer.is_valid():
             advisor = serializer.validated_data['advisor']
 
-            # Manually create a token
+        
             refresh = RefreshToken()
             refresh["advisor_id"] = advisor.id
             refresh["username"] = advisor.username
@@ -52,9 +50,7 @@ class AdvisorLoginView(generics.GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# ----------------------------------------------
-#  ADVISOR LOGOUT (untouched)
-# ----------------------------------------------
+
 class AdvisorLogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -74,9 +70,7 @@ class AdvisorLogoutView(generics.GenericAPIView):
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# ----------------------------------------------
-#  Base Generic Classes for Advisor
-# ----------------------------------------------
+
 class AdvisorBaseListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
@@ -84,9 +78,6 @@ class AdvisorBaseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView
     permission_classes = [IsAuthenticated]
 
 
-# ----------------------------------------------
-#  Compensatory CRUD
-# ----------------------------------------------
 class CompensatoryListCreateView(AdvisorBaseListCreateView):
     queryset = Compensatory.objects.all()
     serializer_class = CompensatorySerializer
@@ -95,10 +86,6 @@ class CompensatoryRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyView
     queryset = Compensatory.objects.all()
     serializer_class = CompensatorySerializer
 
-
-# ----------------------------------------------
-#  CoursePreferenceConstraints CRUD
-# ----------------------------------------------
 class CoursePreferenceConstraintsListCreateView(AdvisorBaseListCreateView):
     queryset = CoursePreferenceConstraints.objects.all()
     serializer_class = CoursePreferenceConstraintsSerializer
@@ -108,9 +95,7 @@ class CoursePreferenceConstraintsRetrieveUpdateDestroyView(AdvisorBaseRetrieveUp
     serializer_class = CoursePreferenceConstraintsSerializer
 
 
-# ----------------------------------------------
-#  TeacherRoomPreference CRUD
-# ----------------------------------------------
+
 class TeacherRoomPreferenceListCreateView(AdvisorBaseListCreateView):
     queryset = TeacherRoomPreference.objects.all()
     serializer_class = TeacherRoomPreferenceSerializer
@@ -120,9 +105,7 @@ class TeacherRoomPreferenceRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDe
     serializer_class = TeacherRoomPreferenceSerializer
 
 
-# ----------------------------------------------
-#  TimetableHeader CRUD
-# ----------------------------------------------
+
 class TimetableHeaderListCreateView(AdvisorBaseListCreateView):
     queryset = TimetableHeader.objects.all()
     serializer_class = TimetableHeaderSerializer
@@ -132,9 +115,7 @@ class TimetableHeaderRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyV
     serializer_class = TimetableHeaderSerializer
 
 
-# ----------------------------------------------
-#  TimetableDetail CRUD
-# ----------------------------------------------
+
 class TimetableDetailListCreateView(AdvisorBaseListCreateView):
     queryset = TimetableDetail.objects.all()
     serializer_class = TimetableDetailSerializer

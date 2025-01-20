@@ -1,8 +1,8 @@
 from django.db import models
-from users.models import Teacher, Room, Course, Batch, Section  # or from users.models import *
+from users.models import Teacher, Room, Course, Batch, Section  
 
 class Compensatory(models.Model):
-    # Django's default 'id' is real PK
+   
     Compensatory_ID = models.IntegerField(unique=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)

@@ -14,20 +14,19 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+
 load_dotenv()
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
+
 SECRET_KEY = 'django-insecure-!hxqcow+s&xp+c$*r2gpl$x64&p84kjmq6_1dl2&3=@)ao5&mt'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Make it environment-controlled
+
+DEBUG = os.getenv('DEBUG', 'False') == 'True' 
 
 CSRF_TRUSTED_ORIGINS = [
     "https://nedfypp.netlify.app",
@@ -41,6 +40,7 @@ ALLOWED_HOSTS = ['fypbackend-d1rs.onrender.com','localhost', '127.0.0.1']
 CORS_ALLOWED_ORIGINS = [
     "https://nedfypp.netlify.app",
     "https://fypbackend-d1rs.onrender.com",
+    "http://localhost:3000"
  ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -60,7 +60,7 @@ LOGGING = {
 
 
 
-# Application definition
+
 
 INSTALLED_APPS = [
     'users',
@@ -97,11 +97,11 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # Access token validity
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Refresh token validity
-    'ROTATE_REFRESH_TOKENS': True,  # Rotate refresh tokens on refresh
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7), 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  
+    'ROTATE_REFRESH_TOKENS': True,  
    
-    'BLACKLIST_AFTER_ROTATION': True,  # Blacklist the old refresh token
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 
@@ -168,8 +168,7 @@ DATABASES = {
 
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -187,8 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
+
 
 LANGUAGE_CODE = 'en-us'
 
@@ -199,14 +197,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
