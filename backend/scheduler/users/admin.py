@@ -58,13 +58,11 @@ class YearAdmin(admin.ModelAdmin):
     list_filter = ('academic_start', 'academic_end')
 
 
-# ---------------------------
-# Updated Models for DEO
-# ---------------------------
+
 @admin.register(Batch)
 class BatchAdmin(admin.ModelAdmin):
-    list_display = ('Batch_ID', 'Batch_name', 'Year')
-    search_fields = ('Batch_name',)
+    list_display = ('Batch_ID','Discipline', 'Batch_name', 'Year')
+    search_fields = ('Batch_name','Discipline',)
 
 
 @admin.register(Section)

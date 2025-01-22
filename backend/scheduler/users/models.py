@@ -110,6 +110,7 @@ class Year(models.Model):
 
 class Batch(models.Model):
     Batch_ID = models.AutoField(primary_key=True)
+    Discipline = models.CharField(max_length=50)
     Batch_name = models.CharField(max_length=100)
     Year = models.IntegerField()
 

@@ -55,7 +55,7 @@ class YearSerializer(serializers.ModelSerializer):
 class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Batch
-        fields = ['Batch_ID', 'Batch_name', 'Year']
+        fields = ['Batch_ID', 'Discipline', 'Batch_name', 'Year']
 
 
 class SectionSerializer(serializers.ModelSerializer):
