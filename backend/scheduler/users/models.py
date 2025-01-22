@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    staff_id = models.CharField(max_length=20, unique=True)
+    staff_id = models.CharField(max_length=20)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
 
