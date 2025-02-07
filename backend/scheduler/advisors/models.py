@@ -21,11 +21,22 @@ class Compensatory(models.Model):
 class CoursePreferenceConstraints(models.Model):
     Preference_ID = models.AutoField(primary_key=True)
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
-    Date = models.DateField()
+
     Start_time = models.TimeField(null=True, blank=True)
     End_time = models.TimeField(null=True, blank=True)
     Status = models.CharField(max_length=50, blank=True, null=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    Section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
+    DAY_CHOICES = [
+         ('Monday', 'Monday'),
+         ('Tuesday', 'Tuesday'),
+         ('Wednesday', 'Wednesday'),
+         ('Thursday', 'Thursday'),
+         ('Friday', 'Friday'),
+         ('Saturday', 'Saturday'),
+
+    ]
+    Day = models.CharField(max_length=10, choices=DAY_CHOICES, null=True, blank=True)
     LAB_OR_THEORY_CHOICES = [
         ('lab', 'Lab'),
         ('theory', 'Theory'),
@@ -36,7 +47,7 @@ class CoursePreferenceConstraints(models.Model):
     Hard_constraint = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"PrefConstraint: Course={self.Course_ID.Course_name}, Tchr={self.Teacher_ID.Name}"
+        return f"Pref: {self.Teacher_ID.Name} - {self.Course_ID.Course_name} on {self.Day}"
 
 
 class TeacherRoomPreference(models.Model):

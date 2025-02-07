@@ -195,7 +195,8 @@ class BatchCourseTeacherAssignment(models.Model):
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Course_type= models.CharField(max_length=100)
-   
+    Section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True, related_name='batch_course_teacher_assignments')
+
 
     def __str__(self):
-        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}"
+        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}, Section={section_name}"

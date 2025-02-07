@@ -102,7 +102,6 @@ class TeacherCourseAssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(BatchCourseTeacherAssignment)
 class BatchCourseTeacherAssignmentAdmin(admin.ModelAdmin):
-    list_display = (
-        'Assignment_ID', 'Batch_ID', 'Course_ID',
-        'Teacher_ID', 'Course_type'
-    )
+    list_display = ('Batch_ID', 'Course_ID', 'Teacher_ID', 'Course_type', 'Section')
+    list_filter = ('Batch_ID', 'Course_ID', 'Teacher_ID', 'Course_type', 'Section')
+    search_fields = ('Batch_ID__Batch_name', 'Course_ID__Course_name', 'Teacher_ID__Name', 'Section__Section_name')
