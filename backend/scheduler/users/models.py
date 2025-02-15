@@ -199,4 +199,4 @@ class BatchCourseTeacherAssignment(models.Model):
 
 
     def __str__(self):
-        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}, Section={section_name}"
+        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}, Section={self.section_name}"
