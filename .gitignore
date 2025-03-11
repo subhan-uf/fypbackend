@@ -1,0 +1,4 @@
+# Ignore Python virtual environment
+venv/
+venv_py311/
+backend/scheduler/venv_py311/
