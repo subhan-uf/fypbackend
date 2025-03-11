@@ -7,7 +7,8 @@ from .models import (
     CoursePreferenceConstraints,
     TeacherRoomPreference,
     TimetableHeader,
-    TimetableDetail
+    TimetableDetail,
+    Generation
 )
 
 
@@ -61,4 +62,8 @@ class TimetableHeaderSerializer(serializers.ModelSerializer):
 class TimetableDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimetableDetail
+        fields = '__all__'
+class GenerationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Generation
         fields = '__all__'

@@ -9,14 +9,16 @@ from .serializers import (
     CoursePreferenceConstraintsSerializer,
     TeacherRoomPreferenceSerializer,
     TimetableHeaderSerializer,
-    TimetableDetailSerializer
+    TimetableDetailSerializer,
+    GenerationSerializer
 )
 from .models import (
     Compensatory,
     CoursePreferenceConstraints,
     TeacherRoomPreference,
     TimetableHeader,
-    TimetableDetail
+    TimetableDetail,
+    Generation
 )
 from users.models import Advisor
 
@@ -123,3 +125,10 @@ class TimetableDetailListCreateView(AdvisorBaseListCreateView):
 class TimetableDetailRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyView):
     queryset = TimetableDetail.objects.all()
     serializer_class = TimetableDetailSerializer
+class GenerationListCreateView(AdvisorBaseListCreateView):
+    queryset = Generation.objects.all().order_by('-Time_Generated')
+    serializer_class = GenerationSerializer
+
+class GenerationRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyView):
+    queryset = Generation.objects.all()
+    serializer_class = GenerationSerializer

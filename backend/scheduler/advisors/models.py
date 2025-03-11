@@ -58,12 +58,20 @@ class TeacherRoomPreference(models.Model):
 
     def __str__(self):
         return f"TchrRoomPref: Tchr={self.Teacher_ID.Name}"
+class Generation(models.Model):
+    Generation_ID = models.AutoField(primary_key=True)
+    Description = models.TextField(blank=True, null=True)
+    Time_Generated = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        # For display purposes in admin or debugging.
+        return f"Generation {self.Generation_ID}: {self.Description or 'No Description'}"
 
 class TimetableHeader(models.Model):
-    Timetable_ID = models.IntegerField(unique=True)
+    Timetable_ID = models.AutoField(primary_key=True)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE)
     Section_ID = models.ForeignKey(Section, on_delete=models.CASCADE)
+    Generation = models.ForeignKey(Generation, on_delete=models.CASCADE)
     STATUS_CHOICES = [
         ('draft', 'Draft'),
         ('published', 'Published'),
@@ -73,9 +81,8 @@ class TimetableHeader(models.Model):
     def __str__(self):
         return f"TimetableHeader: Batch={self.Batch_ID.Batch_name}, Section={self.Section_ID.Section_name}"
 
-
 class TimetableDetail(models.Model):
-    Detail_ID = models.IntegerField(unique=True)
+    Detail_ID = models.AutoField(primary_key=True)
     Timetable_ID = models.ForeignKey(TimetableHeader, on_delete=models.CASCADE)
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)

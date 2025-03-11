@@ -6,7 +6,8 @@ from .views import (
     CoursePreferenceConstraintsListCreateView, CoursePreferenceConstraintsRetrieveUpdateDestroyView,
     TeacherRoomPreferenceListCreateView, TeacherRoomPreferenceRetrieveUpdateDestroyView,
     TimetableHeaderListCreateView, TimetableHeaderRetrieveUpdateDestroyView,
-    TimetableDetailListCreateView, TimetableDetailRetrieveUpdateDestroyView
+    TimetableDetailListCreateView, TimetableDetailRetrieveUpdateDestroyView,
+    GenerationListCreateView, GenerationRetrieveUpdateDestroyView
 )
 
 urlpatterns = [
@@ -34,5 +35,6 @@ urlpatterns = [
     path('timetable-detail/', TimetableDetailListCreateView.as_view(), name='ttd-list-create'),
     path('timetable-detail/<int:pk>/', TimetableDetailRetrieveUpdateDestroyView.as_view(), name='ttd-detail'),
 
-    
+    path('generation/', GenerationListCreateView.as_view(), name='generation-list-create'),
+    path('generation/<int:pk>/', GenerationRetrieveUpdateDestroyView.as_view(), name='generation-detail'),
 ]
