@@ -94,7 +94,8 @@ class TimetableDetail(models.Model):
     TEACHER_PREF_STATUS_CHOICES = [
         ('R', 'Red'),
         ('G', 'Green'),
-        ('Y', 'Yellow')
+        ('Y', 'Yellow'),
+        ('H', 'Blue')
     ]
     Teacher_pref_status = models.CharField(max_length=1, choices=TEACHER_PREF_STATUS_CHOICES, blank=True, null=True)
     THEORY_OR_LAB_CHOICES = [
