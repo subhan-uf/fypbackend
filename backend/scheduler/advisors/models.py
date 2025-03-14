@@ -77,6 +77,7 @@ class TimetableHeader(models.Model):
         ('published', 'Published'),
     ]
     Status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    disabled_days = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f"TimetableHeader: Batch={self.Batch_ID.Batch_name}, Section={self.Section_ID.Section_name}"
