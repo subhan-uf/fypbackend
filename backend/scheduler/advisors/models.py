@@ -2,21 +2,27 @@ from django.db import models
 from users.models import Teacher, Room, Course, Batch, Section  
 
 class Compensatory(models.Model):
-   
-    Compensatory_ID = models.IntegerField(unique=True)
+    Compensatory_ID = models.AutoField(primary_key=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
     Room_ID = models.ForeignKey(Room, on_delete=models.CASCADE)
+    Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE)
     Date = models.DateField()
     Start_time = models.TimeField()
     End_time = models.TimeField()
     Status = models.CharField(max_length=50, blank=True, null=True)
     Desc = models.TextField(blank=True, null=True)
-    Section = models.CharField(max_length=50, blank=True, null=True)
-
+    Section_ID = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
+    # New field to store if the class is lab or theory
+    Lab_or_Theory = models.CharField(
+        max_length=10, 
+        choices=[('lab', 'Lab'), ('theory', 'Theory')],
+        blank=True,
+        null=True
+    )
+    
     def __str__(self):
         return f"Compensatory: Tchr={self.Teacher_ID.Name}, Course={self.Course_ID.Course_name}, {self.Date}"
-
 
 class CoursePreferenceConstraints(models.Model):
     Preference_ID = models.AutoField(primary_key=True)
