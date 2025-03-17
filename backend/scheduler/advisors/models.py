@@ -7,7 +7,15 @@ class Compensatory(models.Model):
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE)
     Room_ID = models.ForeignKey(Room, on_delete=models.CASCADE)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE)
-    Date = models.DateField()
+    Week_number = models.PositiveIntegerField()
+    DAY_CHOICES = [
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+]
+    day = models.CharField(max_length=10, choices=DAY_CHOICES)
     Start_time = models.TimeField()
     End_time = models.TimeField()
     Status = models.CharField(max_length=50, blank=True, null=True)
