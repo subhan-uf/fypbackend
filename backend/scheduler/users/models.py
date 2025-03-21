@@ -165,6 +165,7 @@ class Room(models.Model):
 class Course(models.Model):
     Course_ID = models.AutoField(primary_key=True)
     Course_name = models.CharField(max_length=100)
+    Course_fullname = models.CharField(max_length=500)
     Course_code = models.CharField(max_length=20, unique=True)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='courses')
     Max_classes_per_day = models.PositiveIntegerField()
