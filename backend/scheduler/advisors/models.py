@@ -20,7 +20,7 @@ class Compensatory(models.Model):
     End_time = models.TimeField()
     Status = models.CharField(max_length=50, blank=True, null=True)
     Desc = models.TextField(blank=True, null=True)
-    Section_ID = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
+    Section_ID = models.ForeignKey(Section, on_delete=models.CASCADE, null=True, blank=True)
     # New field to store if the class is lab or theory
     Lab_or_Theory = models.CharField(
         max_length=10, 
@@ -40,7 +40,7 @@ class CoursePreferenceConstraints(models.Model):
     End_time = models.TimeField(null=True, blank=True)
     Status = models.CharField(max_length=50, blank=True, null=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    Section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True)
+    Section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True, blank=True)
     DAY_CHOICES = [
          ('Monday', 'Monday'),
          ('Tuesday', 'Tuesday'),

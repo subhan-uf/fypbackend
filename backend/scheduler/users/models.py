@@ -111,7 +111,7 @@ class Year(models.Model):
 class Batch(models.Model):
     Batch_ID = models.AutoField(primary_key=True)
     Discipline = models.CharField(max_length=50)
-    Batch_name = models.CharField(max_length=100)
+    Batch_name = models.CharField(max_length=100, unique=True)
     Year = models.IntegerField()
 
     def __str__(self):
@@ -196,7 +196,7 @@ class BatchCourseTeacherAssignment(models.Model):
     Course_ID = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Course_type= models.CharField(max_length=100)
-    Section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True, blank=True, related_name='batch_course_teacher_assignments')
+    Section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True, blank=True, related_name='batch_course_teacher_assignments')
 
 
     def __str__(self):
