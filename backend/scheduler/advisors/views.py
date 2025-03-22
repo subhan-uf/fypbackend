@@ -116,7 +116,7 @@ class TimetableHeaderRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyV
     queryset = TimetableHeader.objects.all()
     serializer_class = TimetableHeaderSerializer
 
-
+# bruh
 
 class TimetableDetailListCreateView(AdvisorBaseListCreateView):
     queryset = TimetableDetail.objects.all()
