@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.hashers import make_password
-
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import logging
+logger = logging.getLogger(__name__)
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
@@ -19,8 +21,9 @@ class CustomUser(AbstractUser):
 
 class DEO(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    department_name = models.CharField(max_length=100)
-
+    department_name = models.CharField(max_length=100, blank=True, null=True)
+    def __str__(self):
+        return self.user.username
     @classmethod
     def create_with_user(cls, username, email, password, first_name, last_name, staff_id, department_name):
         user = CustomUser.objects.create_user(
@@ -35,10 +38,12 @@ class DEO(models.Model):
         return cls.objects.create(user=user, department_name=department_name)
 
 
+# Replace your current Advisor model with the following:
 class Advisor(models.Model):
     """
-    Advisor model (untouched).
-    Contains references to a DEO. 
+    Advisor profile model.
+    This model stores advisor-specific information and links to the CustomUser
+    which handles authentication.
     """
     class YearChoices(models.TextChoices):
         FIRST = 'first', 'First'
@@ -54,21 +59,16 @@ class Advisor(models.Model):
         IT_MANAGER_SR = 'it_manager_sr', 'IT Manager (Sr)'
         IT_MANAGER_JR = 'it_manager_jr', 'IT Manager (Jr)'
 
-    username = models.CharField(max_length=150, unique=True)
+    # Link to the CustomUser
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='advisor_profile')
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    password = models.CharField(max_length=128)  # hashed password
-    year = models.CharField(max_length=10, choices=YearChoices.choices)
-    faculty = models.CharField(max_length=100)
-    seniority = models.CharField(max_length=20, choices=SeniorityChoices.choices)
-    deo = models.ForeignKey('DEO', on_delete=models.CASCADE, related_name='advisors')
-
-    def save(self, *args, **kwargs):
-        if not self.pk:  # new instance => hash password
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    year = models.CharField(max_length=10, choices=YearChoices.choices, blank=True, null=True)
+    faculty = models.CharField(max_length=100, blank=True, null=True)
+    seniority = models.CharField(max_length=20, choices=SeniorityChoices.choices, blank=True, null=True)
+    deo = models.ForeignKey('DEO', on_delete=models.CASCADE, related_name='advisors', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.faculty} Advisor ({self.year})"
+        return f"{self.user.username} - Advisor ({self.year})"
 
 
 class Chairman(models.Model):
@@ -200,4 +200,17 @@ class BatchCourseTeacherAssignment(models.Model):
 
 
     def __str__(self):
-        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}, Section={self.section_name}"
+        section_name = self.Section.Section_name if self.Section else "No Section"
+        return f"Batch={self.Batch_ID.Batch_name}, Course={self.Course_ID.Course_name}, Teacher={self.Teacher_ID.Name}, Section={self.Section}"
+
+
+@receiver(post_save, sender=CustomUser)
+def create_related_profile(sender, instance, created, **kwargs):
+    if created:
+        logger.info(f"Signal fired for user: {instance.username} with role: {instance.role}")
+        # Or temporarily use:
+        # print(f"Signal fired for user: {instance.username} with role: {instance.role}")
+        if instance.role == 'deo':
+            DEO.objects.create(user=instance, department_name='')
+        elif instance.role == 'advisor':
+            Advisor.objects.create(user=instance, year='', faculty='', seniority='', deo=None)

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from users.models import Advisor
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import (
     CustomUser, DEO, Advisor, Chairman,
@@ -15,15 +16,63 @@ admin.site.site_title = "NED Admin Portal"
 admin.site.index_title = "Welcome to the NED Admin Panel"
 
 
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'role',
+            'staff_id',
+            'phone_number',
+        )
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    # Use our custom creation form for adding a user
+    add_form = CustomUserCreationForm
+    form = UserChangeForm  # For editing, you can use the default change form or a custom one
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username',
+                'email',
+                'first_name',
+                'last_name',
+                'role',
+                'staff_id',
+                'phone_number',
+                'password1',
+                'password2',
+            ),
+        }),
+    )
+
+    # Extend the default fieldsets for the change view
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('role', 'profile_picture', 'staff_id', 'phone_number')}),
     )
+
     list_display = ('username', 'email', 'role', 'staff_id')
     list_filter = ('role',)
 
-
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        # Create the related profile after saving if needed
+        if obj.role == 'deo' and not hasattr(obj, 'deo'):
+            DEO.objects.get_or_create(user=obj, defaults={'department_name': ''})
+        elif obj.role == 'advisor' and not hasattr(obj, 'advisor_profile'):
+            Advisor.objects.get_or_create(user=obj, defaults={
+                'year': '', 'faculty': '', 'seniority': '', 'deo': None
+            })
 @admin.register(DEO)
 class DEOAdmin(admin.ModelAdmin):
     list_display = ('user', 'department_name')
@@ -32,10 +81,15 @@ class DEOAdmin(admin.ModelAdmin):
 
 @admin.register(Advisor)
 class AdvisorAdmin(admin.ModelAdmin):
-    list_display = ('username', 'year', 'faculty', 'seniority', 'profile_pic')
-    search_fields = ('username', 'faculty', 'seniority')
-    list_filter = ('year', 'seniority','deo','faculty')
-    ordering = ('username',)
+    list_display = ('get_username', 'year', 'faculty', 'seniority', 'profile_pic')
+    search_fields = ('user__username', 'faculty', 'seniority')
+    list_filter = ('year', 'seniority', 'deo', 'faculty')
+    ordering = ('user__username',)
+
+    def get_username(self, obj):
+        return obj.user.username
+    get_username.short_description = 'Username'
+
 
 
 @admin.register(Chairman)

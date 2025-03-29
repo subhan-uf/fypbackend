@@ -9,7 +9,22 @@ from .models import (
 )
 
 
+class AdvisorLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+        if not username or not password:
+            raise serializers.ValidationError('Must include "username" and "password".')
+        user = authenticate(username=username, password=password)
+        if user is None:
+            raise serializers.ValidationError('Invalid username or password.')
+        if getattr(user, 'role', None) != 'advisor':
+            raise serializers.ValidationError('Access denied. Only users with Advisor role can log in.')
+        attrs['user'] = user
+        return attrs
 class DEOLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -34,10 +49,12 @@ class DEOLoginSerializer(serializers.Serializer):
 
 
 class AdvisorSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+
     class Meta:
         model = Advisor
-        fields = ['id', 'username', 'profile_pic', 'year', 'faculty', 'seniority', 'deo']
-
+        fields = ['id', 'username', 'email', 'profile_pic', 'year', 'faculty', 'seniority', 'deo']
 
 
 class DepartmentSerializer(serializers.ModelSerializer):

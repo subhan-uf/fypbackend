@@ -22,10 +22,25 @@ from .serializers import (
     DepartmentSerializer, YearSerializer, BatchSerializer,
     SectionSerializer, TeacherSerializer, RoomSerializer,
     CourseSerializer, TeacherCourseAssignmentSerializer,
-    BatchCourseTeacherAssignmentSerializer
+    BatchCourseTeacherAssignmentSerializer, AdvisorLoginSerializer
 )
 
 
+class AdvisorLoginView(generics.GenericAPIView):
+    serializer_class = AdvisorLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+        return Response({
+            'refresh': str(refresh),
+            'access': access,
+            'username': user.username,
+            'role': user.role
+        }, status=status.HTTP_200_OK)
 class DEOLoginView(generics.GenericAPIView):
     serializer_class = DEOLoginSerializer
 
@@ -51,6 +66,22 @@ class DEOLoginView(generics.GenericAPIView):
             'role': user.role
         }, status=status.HTTP_200_OK)
 
+class AdvisorLogoutView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data.get('refresh_token')
+            if not refresh_token:
+                return Response({"error": "Refresh token not provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"success": "Successfully logged out."}, status=status.HTTP_200_OK)
+        except TokenError:
+            return Response({"error": "Token is invalid or expired."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class DEOLogoutView(generics.GenericAPIView):

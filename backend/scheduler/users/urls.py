@@ -10,13 +10,15 @@ from .views import (
     RoomListCreateView, RoomRetrieveUpdateDestroyView,
     CourseListCreateView, CourseRetrieveUpdateDestroyView,
     TeacherCourseAssignmentListCreateView, TeacherCourseAssignmentRetrieveUpdateDestroyView,
-    BatchCourseTeacherAssignmentListCreateView, BatchCourseTeacherAssignmentRetrieveUpdateDestroyView
+    BatchCourseTeacherAssignmentListCreateView, BatchCourseTeacherAssignmentRetrieveUpdateDestroyView, AdvisorLoginView, AdvisorLogoutView
 )
 
 urlpatterns = [
     # DEO Auth
     path('deo/login/', DEOLoginView.as_view(), name='deo-login'),
     path('deo/logout/', DEOLogoutView.as_view(), name='deo-logout'),
+    path('login/advisor/', AdvisorLoginView.as_view(), name='advisor-login'),
+    path('logout/advisor/', AdvisorLogoutView.as_view(), name='advisor-logout'),
 
     # Department
     path('departments/', DepartmentListCreateView.as_view(), name='department-list-create'),
