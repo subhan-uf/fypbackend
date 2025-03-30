@@ -8,7 +8,64 @@ from .models import (
     TeacherCourseAssignment, BatchCourseTeacherAssignment
 )
 
+class AdvisorCreateSerializer(serializers.ModelSerializer):
+    # Include user fields from the CustomUser model via the related 'user' field
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    password = serializers.CharField(source='user.password', write_only=True)
+    phone_number = serializers.CharField(source='user.phone_number')
+    staff_id = serializers.CharField(source='user.staff_id')
+    
+    # Advisor-specific fields
+    year = serializers.ChoiceField(choices=Advisor.YearChoices.choices, allow_blank=True, allow_null=True)
+    faculty = serializers.CharField(allow_blank=True, allow_null=True)
+    seniority = serializers.ChoiceField(choices=Advisor.SeniorityChoices.choices, allow_blank=True, allow_null=True)
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
 
+    class Meta:
+        model = Advisor
+        fields = [
+            'username', 'email', 'first_name', 'last_name', 'password',
+            'phone_number', 'staff_id', 'year', 'faculty', 'seniority', 'profile_pic'
+        ]
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        password = user_data.pop('password')
+        # Create the CustomUser with role 'advisor'
+        user = CustomUser.objects.create(**user_data, role='advisor')
+        user.set_password(password)
+        user.save()
+        # Check if an advisor already exists (it might have been auto-created by the signal)
+        if hasattr(user, 'advisor_profile'):
+            # Update existing advisor if needed
+            advisor = user.advisor_profile
+            for attr, value in validated_data.items():
+                setattr(advisor, attr, value)
+            advisor.save()
+        else:
+            advisor = Advisor.objects.create(user=user, **validated_data)
+        return advisor
+
+
+    def update(self, instance, validated_data):
+        # Update nested user fields
+        user_data = validated_data.pop('user', {})
+        user = instance.user
+        for attr, value in user_data.items():
+            if attr == 'password':
+                user.set_password(value)
+            else:
+                setattr(user, attr, value)
+        user.save()
+        # Update Advisor fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+    
 class AdvisorLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -49,12 +106,29 @@ class DEOLoginSerializer(serializers.Serializer):
 
 
 class AdvisorSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
+    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source='user.email')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    phone_number = serializers.CharField(source='user.phone_number')
+    staff_id = serializers.CharField(source='user.staff_id')
 
     class Meta:
         model = Advisor
-        fields = ['id', 'username', 'email', 'profile_pic', 'year', 'faculty', 'seniority', 'deo']
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'phone_number',
+            'staff_id',
+            'profile_pic',
+            'year',
+            'faculty',
+            'seniority',
+            'deo'
+        ]
 
 
 class DepartmentSerializer(serializers.ModelSerializer):

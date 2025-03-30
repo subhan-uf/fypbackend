@@ -10,7 +10,8 @@ from .views import (
     RoomListCreateView, RoomRetrieveUpdateDestroyView,
     CourseListCreateView, CourseRetrieveUpdateDestroyView,
     TeacherCourseAssignmentListCreateView, TeacherCourseAssignmentRetrieveUpdateDestroyView,
-    BatchCourseTeacherAssignmentListCreateView, BatchCourseTeacherAssignmentRetrieveUpdateDestroyView, AdvisorLoginView, AdvisorLogoutView
+    BatchCourseTeacherAssignmentListCreateView, BatchCourseTeacherAssignmentRetrieveUpdateDestroyView, AdvisorLoginView, AdvisorLogoutView,
+    AdvisorListCreateView, AdvisorRetrieveUpdateDestroyView
 )
 
 urlpatterns = [
@@ -19,6 +20,8 @@ urlpatterns = [
     path('deo/logout/', DEOLogoutView.as_view(), name='deo-logout'),
     path('login/advisor/', AdvisorLoginView.as_view(), name='advisor-login'),
     path('logout/advisor/', AdvisorLogoutView.as_view(), name='advisor-logout'),
+    path('advisors/', AdvisorListCreateView.as_view(), name='advisor-list-create'),
+    path('advisors/<int:pk>/', AdvisorRetrieveUpdateDestroyView.as_view(), name='advisor-detail'),
 
     # Department
     path('departments/', DepartmentListCreateView.as_view(), name='department-list-create'),

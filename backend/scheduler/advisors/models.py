@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import Teacher, Room, Course, Batch, Section  
-
+from django.conf import settings
 class Compensatory(models.Model):
     Compensatory_ID = models.AutoField(primary_key=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)
@@ -76,6 +76,7 @@ class Generation(models.Model):
     Generation_ID = models.AutoField(primary_key=True)
     Description = models.TextField(blank=True, null=True)
     Time_Generated = models.DateTimeField(auto_now_add=True)
+    last_edited_by = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
         # For display purposes in admin or debugging.

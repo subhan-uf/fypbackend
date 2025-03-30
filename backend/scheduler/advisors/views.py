@@ -132,3 +132,6 @@ class GenerationListCreateView(AdvisorBaseListCreateView):
 class GenerationRetrieveUpdateDestroyView(AdvisorBaseRetrieveUpdateDestroyView):
     queryset = Generation.objects.all()
     serializer_class = GenerationSerializer
+    def perform_update(self, serializer):
+        # Update last_edited_by to current user
+        serializer.save(last_edited_by=self.request.user.username)

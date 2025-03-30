@@ -22,10 +22,49 @@ from .serializers import (
     DepartmentSerializer, YearSerializer, BatchSerializer,
     SectionSerializer, TeacherSerializer, RoomSerializer,
     CourseSerializer, TeacherCourseAssignmentSerializer,
-    BatchCourseTeacherAssignmentSerializer, AdvisorLoginSerializer
+    BatchCourseTeacherAssignmentSerializer, AdvisorLoginSerializer, AdvisorCreateSerializer
 )
 
+class AdvisorListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        # Only allow DEO to see advisors that belong to their department.
+        # Assumes that the DEO’s profile is accessible via request.user.deo.
+        if self.request.user.role != 'deo':
+            return Advisor.objects.none()
+      
+        return Advisor.objects.all()
+
+    def get_serializer_class(self):
+        # Use the read serializer for GET requests and the create serializer for POST.
+        if self.request.method == "GET":
+            return AdvisorSerializer  # This serializer returns 'id' and nested user data.
+        return AdvisorCreateSerializer
+
+    def perform_create(self, serializer):
+        # Automatically assign the DEO based on the logged-in user
+        deo = self.request.user.deo
+        serializer.save(deo=deo)
+
+class AdvisorRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = AdvisorCreateSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        if self.request.user.role != 'deo':
+            return Advisor.objects.none()
+        return Advisor.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        # Get the advisor instance
+        advisor = self.get_object()
+        # Delete the associated CustomUser record
+        advisor.user.delete()
+        # The Advisor record will be deleted automatically due to cascade.
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 class AdvisorLoginView(generics.GenericAPIView):
     serializer_class = AdvisorLoginSerializer
 
