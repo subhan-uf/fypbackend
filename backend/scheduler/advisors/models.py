@@ -63,7 +63,17 @@ class CoursePreferenceConstraints(models.Model):
     def __str__(self):
         return f"Pref: {self.Teacher_ID.Name} - {self.Course_ID.Course_name} on {self.Day}"
 
+class Discipline(models.Model):
+    # Use Name as the primary key. Adjust max_length as needed.
+    Name = models.CharField(max_length=100, primary_key=True)
+    # Lab_day_selection is an integer field – 1 means first option, 2 means second.
+    Lab_day_selection = models.IntegerField(choices=[
+        (1, "Monday & Wednesday Lab days for 2nd and 4th year and Tuesday and Thursday Lab days for 1st and 3rd Year"),
+        (2, "Tuesday and Thursday Lab days for 2nd and 4th Year and Monday and Wednesday Lab days for 1st and 3rd Year"),
+    ])
 
+    def __str__(self):
+        return self.Name
 class TeacherRoomPreference(models.Model):
     Room_Preference_ID = models.AutoField(primary_key=True)
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE)

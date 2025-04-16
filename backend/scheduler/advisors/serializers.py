@@ -8,7 +8,8 @@ from .models import (
     TeacherRoomPreference,
     TimetableHeader,
     TimetableDetail,
-    Generation
+    Generation,
+    Discipline
 )
 
 
@@ -40,7 +41,10 @@ class CompensatorySerializer(serializers.ModelSerializer):
         model = Compensatory
         fields = '__all__'
 
-
+class DisciplineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discipline
+        fields = '__all__'
 class CoursePreferenceConstraintsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CoursePreferenceConstraints

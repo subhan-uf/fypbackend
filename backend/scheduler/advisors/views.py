@@ -10,7 +10,8 @@ from .serializers import (
     TeacherRoomPreferenceSerializer,
     TimetableHeaderSerializer,
     TimetableDetailSerializer,
-    GenerationSerializer
+    GenerationSerializer,
+    DisciplineSerializer
 )
 from .models import (
     Compensatory,
@@ -18,11 +19,19 @@ from .models import (
     TeacherRoomPreference,
     TimetableHeader,
     TimetableDetail,
-    Generation
+    Generation,
+    Discipline
 )
 from users.models import Advisor
 
+class DisciplineListCreateView(generics.ListCreateAPIView):
+    queryset = Discipline.objects.all()
+    serializer_class = DisciplineSerializer
+    # Optionally, add permission_classes if needed.
 
+class DisciplineRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Discipline.objects.all()
+    serializer_class = DisciplineSerializer
 
 class AdvisorLoginView(generics.GenericAPIView):
     serializer_class = AdvisorLoginSerializer

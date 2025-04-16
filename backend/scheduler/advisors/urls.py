@@ -7,7 +7,8 @@ from .views import (
     TeacherRoomPreferenceListCreateView, TeacherRoomPreferenceRetrieveUpdateDestroyView,
     TimetableHeaderListCreateView, TimetableHeaderRetrieveUpdateDestroyView,
     TimetableDetailListCreateView, TimetableDetailRetrieveUpdateDestroyView,
-    GenerationListCreateView, GenerationRetrieveUpdateDestroyView
+    GenerationListCreateView, GenerationRetrieveUpdateDestroyView,
+    DisciplineListCreateView, DisciplineRetrieveUpdateDestroyView
 )
 
 urlpatterns = [
@@ -18,7 +19,8 @@ urlpatterns = [
     # Compensatory
     path('compensatory/', CompensatoryListCreateView.as_view(), name='compensatory-list-create'),
     path('compensatory/<int:pk>/', CompensatoryRetrieveUpdateDestroyView.as_view(), name='compensatory-detail'),
-
+     path('disciplines/', DisciplineListCreateView.as_view(), name='discipline-list-create'),
+    path('disciplines/<str:pk>/', DisciplineRetrieveUpdateDestroyView.as_view(), name='discipline-detail'),
     # CoursePreferenceConstraints
     path('course-preference-constraints/', CoursePreferenceConstraintsListCreateView.as_view(), name='cpc-list-create'),
     path('course-preference-constraints/<int:pk>/', CoursePreferenceConstraintsRetrieveUpdateDestroyView.as_view(), name='cpc-detail'),
