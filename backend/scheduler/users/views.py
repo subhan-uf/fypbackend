@@ -153,6 +153,7 @@ class BaseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class DepartmentListCreateView(BaseListCreateView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
+    
 
 class DepartmentRetrieveUpdateDestroyView(BaseRetrieveUpdateDestroyView):
     queryset = Department.objects.all()

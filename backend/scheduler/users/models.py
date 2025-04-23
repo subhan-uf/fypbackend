@@ -135,7 +135,7 @@ class Teacher(models.Model):
     NIC = models.CharField(max_length=20, unique=True)
     Email = models.EmailField(unique=True)
     Phone = models.CharField(max_length=15, null=True, blank=True)
-    Max_classes = models.PositiveIntegerField()
+    Max_classes = models.PositiveIntegerField(null=True, blank=True)
     Health_limitation = models.CharField(max_length=255, null=True, blank=True)
     Seniority = models.CharField(max_length=50, null=True, blank=True)
     Teacher_type = models.CharField(max_length=50)  # e.g. "Permanent", "Visiting", etc.
