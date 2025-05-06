@@ -139,7 +139,7 @@ class Teacher(models.Model):
     Health_limitation = models.CharField(max_length=255, null=True, blank=True)
     Seniority = models.CharField(max_length=50, null=True, blank=True)
     Teacher_type = models.CharField(max_length=50)  # e.g. "Permanent", "Visiting", etc.
-
+    
     def __str__(self):
         return self.Name
 
@@ -168,10 +168,12 @@ class Course(models.Model):
     Course_fullname = models.CharField(max_length=500)
     Course_code = models.CharField(max_length=20)
     Batch_ID = models.ForeignKey(Batch, on_delete=models.CASCADE, related_name='courses')
-    Max_classes_per_day = models.PositiveIntegerField()
+    Max_classes_per_day = models.PositiveIntegerField(null= True, blank=True)
     Credit_hours = models.PositiveIntegerField()
     Course_desc = models.TextField(null=True, blank=True)
     Is_Lab = models.BooleanField(default=False)
+    Non_Credit = models.BooleanField(default=False)
+    Archived  = models.BooleanField(default=False)
     def __str__(self):
         return self.Course_name
 
@@ -197,7 +199,7 @@ class BatchCourseTeacherAssignment(models.Model):
     Teacher_ID = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='batch_course_teacher_assignments')
     Course_type= models.CharField(max_length=100)
     Section = models.ForeignKey(Section, on_delete=models.CASCADE, null=True, blank=True, related_name='batch_course_teacher_assignments')
-
+    Archived  = models.BooleanField(default=False)
 
     def __str__(self):
         section_name = self.Section.Section_name if self.Section else "No Section"

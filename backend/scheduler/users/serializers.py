@@ -178,7 +178,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = [
              'Course_ID', 'Course_name','Course_fullname' ,'Course_code', 'Batch_ID',
-            'Max_classes_per_day', 'Credit_hours', 'Course_desc', 'Is_Lab'
+            'Max_classes_per_day', 'Credit_hours', 'Course_desc', 'Is_Lab', 'Non_Credit','Archived'
         ]
 
 
@@ -191,4 +191,4 @@ class TeacherCourseAssignmentSerializer(serializers.ModelSerializer):
 class BatchCourseTeacherAssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = BatchCourseTeacherAssignment
-        fields = ['Assignment_ID', 'Batch_ID', 'Course_ID', 'Teacher_ID', 'Course_type', 'Section']
+        fields = ['Assignment_ID', 'Batch_ID', 'Course_ID', 'Teacher_ID', 'Course_type', 'Section', 'Archived']

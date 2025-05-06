@@ -63,7 +63,7 @@ LOGGING = {
 
 
 INSTALLED_APPS = [
-    'users',
+    # 'users',
     'advisors',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -75,6 +75,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'users.apps.UsersConfig',
+    'schema.apps.SchemaConfig',
 
     
 ]
