@@ -99,7 +99,7 @@ The heart of the backend is its **extremely comprehensive, custom timetable gene
 
 ## Entity Relationship Diagram (ERD)
 
-![Demo](https://imgur.com/a/gm8Iw7V)
+![Demo](https://i.imgur.com/OKUrdz4.png)
 
 
 ---
